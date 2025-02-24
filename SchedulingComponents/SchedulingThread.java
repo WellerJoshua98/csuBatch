@@ -46,6 +46,9 @@ public class SchedulingThread extends Thread {
         this.schedulingPolicyName = schedulingPolicyName;
     }
     
+    /**
+     * Run the scheduling thread
+     */
     public void run() {
         SchedulingPolicy schedulingPolicy = new SchedulingPolicy();
         Scanner sc = new Scanner(System.in);
@@ -68,6 +71,7 @@ public class SchedulingThread extends Thread {
 
         sc.close();
 
+        //Schedule jobs based on the scheduling policy
         if(schedulingPolicyName.equals("FCFS")) {
             BlockingQueue<BatchJob> fcfsQueue = schedulingPolicy.fcfs_scheduling(jobQueue);
             this.setJobQueue(fcfsQueue);

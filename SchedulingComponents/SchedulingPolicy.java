@@ -6,7 +6,9 @@ import BatchJobsComponents.BatchJob;
 
 public class SchedulingPolicy {
     /**
-     * FCFS scheduling
+     * FCFS scheduling implementation
+     * @param jobQueue
+     * @return fcfsQueue
      */
     public BlockingQueue<BatchJob> fcfs_scheduling(BlockingQueue<BatchJob> jobQueue) {
         //Create thread-safe queue that maintains the order of jobs
@@ -23,7 +25,7 @@ public class SchedulingPolicy {
     /**
      * SJF scheduling implementation
      * @param jobQueue
-     * @return
+     * @return sjfQueue
      */
     public BlockingQueue<BatchJob> sjf_scheduling(BlockingQueue<BatchJob> jobQueue) {
         BlockingQueue<BatchJob> sjfQueue = new LinkedBlockingQueue<>();
@@ -61,6 +63,11 @@ public class SchedulingPolicy {
         return sjfQueue;
     }
 
+    /**
+     * Priority scheduling implementation
+     * @param jobQueue
+     * @return sjfQueue
+     */
     public BlockingQueue<BatchJob> priority_scheduling(BlockingQueue<BatchJob> jobQueue) {
         BlockingQueue<BatchJob> priorityQueue = new LinkedBlockingQueue<>();
         SchedulingThread schedulingThread = new SchedulingThread(priorityQueue, "priority");
