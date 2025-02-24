@@ -1,3 +1,5 @@
+package BatchJobsComponents;
+
 public class BatchJob {
     private String jobName;
     private int executionTime;
