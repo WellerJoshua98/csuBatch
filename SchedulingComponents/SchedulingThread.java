@@ -1,10 +1,14 @@
 package SchedulingComponents;
+import BatchJobsComponents.BatchJob;
+import Ux.UIHelper;
 import java.util.Scanner;
 import java.util.concurrent.BlockingQueue;
 
-import BatchJobsComponents.BatchJob;
-
 public class SchedulingThread extends Thread {
+
+    private static void errorHelperBatch() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
     private BlockingQueue<BatchJob> jobQueue;
     private String schedulingPolicyName;
 
@@ -85,7 +89,19 @@ public class SchedulingThread extends Thread {
     }
 
     public static void main(String[] args) {
-        
-    }
+        UIHelper helper = new UIHelper();
+        System.out.println("Welcome to CSU BatchJob Please Enter a Command");
+        System.out.println("Enter help for more options");
+
+        Scanner keyboard = new Scanner(System.in);
+        String command = keyboard.nextLine();
+
+        while(!command.equals("quit")){
+            helper.commandFunction(command);
+            command = keyboard.nextLine();
+        }
+        keyboard.close();
+
+    };
     
 }
