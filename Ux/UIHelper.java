@@ -1,9 +1,5 @@
 package Ux;
-
-import java.util.Scanner;
-
 public class UIHelper {
-    Scanner scanner = new Scanner(System.in);
     
     public void commandFunction(String command){
         if(command.equals("exit")){
@@ -11,7 +7,7 @@ public class UIHelper {
         } else if (command.equals("help")){
             help();
         } else if (command.contains("run")){
-            run();
+            run(command);
         } else if (command.equals("list")) {
             list();
         } else if (command.contains("test")) {
@@ -35,8 +31,13 @@ public class UIHelper {
     }
 
     // TODO
-    public void run() {
-        System.out.println("Problem will run");
+    public void run(String job) {
+        String[] words = job.split("\\s+");
+        if(words.length > 4){
+            errorHelperBatch();
+        }
+        String[] jobQueueInfo = new String[3];
+        System.out.println("Job was submitted");
     }
     
     // TODO
