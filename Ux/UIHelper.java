@@ -1,13 +1,19 @@
 package Ux;
+
+import SchedulingComponents.SchedulingThread;
+
+
+
+
 public class UIHelper {
     
-    public void commandFunction(String command){
+    public void commandFunction(String command, SchedulingThread fcfSchedulingThread){
         if(command.equals("exit")){
             System.out.println("Good-bye");
         } else if (command.equals("help")){
             help();
         } else if (command.contains("run")){
-            run(command);
+            run(command, fcfSchedulingThread);
         } else if (command.equals("list")) {
             list();
         } else if (command.contains("test")) {
@@ -31,12 +37,9 @@ public class UIHelper {
     }
 
     // TODO
-    public void run(String job) {
-        String[] words = job.split("\\s+");
-        if(words.length > 4){
-            errorHelperBatch();
-        }
-        String[] jobQueueInfo = new String[3];
+    public void run(String job, SchedulingThread fcfSchedulingThread) {
+        String[] words = job.split("run ");
+        fcfSchedulingThread.run(words[1]);
         System.out.println("Job was submitted");
     }
     
