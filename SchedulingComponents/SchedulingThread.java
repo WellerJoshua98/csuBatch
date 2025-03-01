@@ -1,7 +1,5 @@
 package SchedulingComponents;
 import BatchJobsComponents.BatchJob;
-import Ux.UIHelper;
-import java.util.Scanner;
 import java.util.concurrent.BlockingQueue;
 
 public class SchedulingThread extends Thread {
@@ -49,21 +47,31 @@ public class SchedulingThread extends Thread {
     public void setSchedulingPolicy(String schedulingPolicyName) {
         this.schedulingPolicyName = schedulingPolicyName;
     }
+
+    public int getTotalTime(){
+        int total = 0;
+        for(BatchJob job: jobQueue){
+            total += job.getExecutionTime();
+        }
+        return total;
+    }
     
     /**
      * Run the scheduling thread
      */
-    public void run() {
+    public void run(String userInput) {
         SchedulingPolicy schedulingPolicy = new SchedulingPolicy();
-        Scanner sc = new Scanner(System.in);
         //Add jobs to the queue
-        String userInput = sc.nextLine();
-        String[] jobDetails = userInput.split(" ");
+        String[] jobDetails = userInput.split("\\s+");
         if(!userInput.equals("exit")) {
             if(jobDetails.length == 3) {
                 BatchJob job = new BatchJob(jobDetails[0], Integer.parseInt(jobDetails[1]), Integer.parseInt(jobDetails[2]));
                 try {
                     jobQueue.put(job);
+                    System.out.println("Job " + job.getJobName() + " was submitted");
+                    System.out.println("Total number of jobs in the queue: " + jobQueue.size());
+                    System.out.println("Expected waiting time: " + getTotalTime());
+                    System.out.println("Scheduling Policy " + getSchedulingPolicy());
                 } catch (InterruptedException e) {
                     Thread.currentThread().interrupt();
                 }
@@ -73,9 +81,7 @@ public class SchedulingThread extends Thread {
             }
         }
 
-        sc.close();
-
-        //Schedule jobs based on the scheduling policy
+        // Schedule jobs based on the scheduling policy
         if(schedulingPolicyName.equals("FCFS")) {
             BlockingQueue<BatchJob> fcfsQueue = schedulingPolicy.fcfs_scheduling(jobQueue);
             this.setJobQueue(fcfsQueue);
@@ -87,21 +93,5 @@ public class SchedulingThread extends Thread {
             this.setJobQueue(priority);
         }
     }
-
-    public static void main(String[] args) {
-        UIHelper helper = new UIHelper();
-        System.out.println("Welcome to CSU BatchJob Please Enter a Command");
-        System.out.println("Enter help for more options");
-
-        Scanner keyboard = new Scanner(System.in);
-        String command = keyboard.nextLine();
-
-        while(!command.equals("quit")){
-            helper.commandFunction(command);
-            command = keyboard.nextLine();
-        }
-        keyboard.close();
-
-    };
     
 }
