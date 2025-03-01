@@ -3,6 +3,7 @@ import BatchJobsComponents.BatchJob;
 import Ux.UIHelper;
 import java.util.Scanner;
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 
 public class SchedulingThread extends Thread {
 
@@ -88,6 +89,13 @@ public class SchedulingThread extends Thread {
         }
     }
 
+    public void printJobQueue() {
+        System.out.println("Jobs in the queue:");
+        for (BatchJob job : jobQueue) {
+            System.out.println(job);
+        }
+    }
+
     public static void main(String[] args) {
         UIHelper helper = new UIHelper();
         System.out.println("Welcome to CSU BatchJob Please Enter a Command");
@@ -102,6 +110,23 @@ public class SchedulingThread extends Thread {
         }
         keyboard.close();
 
+        //Demo of scheduling thread
+        BlockingQueue<BatchJob> jobQueue = new LinkedBlockingQueue<>();
+        for (int i = 1; i <= 10; i++) {
+            BatchJob job = new BatchJob("Job" + i, i * 10, 10 - i);
+            try {
+                jobQueue.put(job);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
+        }
+
+        
+        SchedulingThread schedulingThread = new SchedulingThread(jobQueue, "SJF");
+        schedulingThread.printJobQueue();
+        schedulingThread.start();
+        System.err.println("After scheduling thread started");
+        schedulingThread.printJobQueue();
     };
     
 }
