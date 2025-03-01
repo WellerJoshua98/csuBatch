@@ -18,9 +18,6 @@ public class MainClass {
 
         Scanner keyboardScanner = new Scanner(System.in); // No try-with-resources here
 
-        System.out.println("Enter lines of text. Press Enter after each line.");
-        System.out.println("Type 'quit' (case-sensitive) to exit.");
-
         while (true) {
             String line = "";
             try {

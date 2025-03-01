@@ -61,9 +61,7 @@ public class SchedulingThread extends Thread {
      */
     public void run(String userInput) {
         SchedulingPolicy schedulingPolicy = new SchedulingPolicy();
-        // Scanner sc = new Scanner(System.in);
         //Add jobs to the queue
-        // String userInput = sc.nextLine();
         String[] jobDetails = userInput.split("\\s+");
         if(!userInput.equals("exit")) {
             if(jobDetails.length == 3) {
@@ -82,8 +80,6 @@ public class SchedulingThread extends Thread {
                 System.out.println("Invalid input. Please enter job name, execution time and priority separated by space.");
             }
         }
-
-        // sc.close();
 
         // Schedule jobs based on the scheduling policy
         if(schedulingPolicyName.equals("FCFS")) {
