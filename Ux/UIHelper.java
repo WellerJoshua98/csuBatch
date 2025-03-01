@@ -1,17 +1,19 @@
 package Ux;
 
-import java.util.Scanner;
+import SchedulingComponents.SchedulingThread;
+
+
+
 
 public class UIHelper {
-    Scanner scanner = new Scanner(System.in);
     
-    public void commandFunction(String command){
+    public void commandFunction(String command, SchedulingThread fcfSchedulingThread){
         if(command.equals("exit")){
             System.out.println("Good-bye");
         } else if (command.equals("help")){
             help();
         } else if (command.contains("run")){
-            run();
+            run(command, fcfSchedulingThread);
         } else if (command.equals("list")) {
             list();
         } else if (command.contains("test")) {
@@ -35,8 +37,9 @@ public class UIHelper {
     }
 
     // TODO
-    public void run() {
-        System.out.println("Problem will run");
+    public void run(String job, SchedulingThread fcfSchedulingThread) {
+        String[] words = job.split("run ");
+        fcfSchedulingThread.run(words[1]);
     }
     
     // TODO
