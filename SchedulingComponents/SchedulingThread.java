@@ -1,6 +1,5 @@
 package SchedulingComponents;
 import BatchJobsComponents.BatchJob;
-import java.util.Scanner;
 import java.util.concurrent.BlockingQueue;
 
 public class SchedulingThread extends Thread {
@@ -48,13 +47,21 @@ public class SchedulingThread extends Thread {
     public void setSchedulingPolicy(String schedulingPolicyName) {
         this.schedulingPolicyName = schedulingPolicyName;
     }
+
+    public int getTotalTime(){
+        int total = 0;
+        for(BatchJob job: jobQueue){
+            total += job.getExecutionTime();
+        }
+        return total;
+    }
     
     /**
      * Run the scheduling thread
      */
     public void run(String userInput) {
         SchedulingPolicy schedulingPolicy = new SchedulingPolicy();
-        Scanner sc = new Scanner(System.in);
+        // Scanner sc = new Scanner(System.in);
         //Add jobs to the queue
         // String userInput = sc.nextLine();
         String[] jobDetails = userInput.split("\\s+");
@@ -65,8 +72,8 @@ public class SchedulingThread extends Thread {
                     jobQueue.put(job);
                     System.out.println("Job " + job.getJobName() + " was submitted");
                     System.out.println("Total number of jobs in the queue: " + jobQueue.size());
-                    System.out.println("Expected waiting time: ");
-                    System.out.println("Scheduling Policy" + getSchedulingPolicy());
+                    System.out.println("Expected waiting time: " + getTotalTime());
+                    System.out.println("Scheduling Policy " + getSchedulingPolicy());
                 } catch (InterruptedException e) {
                     Thread.currentThread().interrupt();
                 }
@@ -76,9 +83,9 @@ public class SchedulingThread extends Thread {
             }
         }
 
-        sc.close();
+        // sc.close();
 
-        //Schedule jobs based on the scheduling policy
+        // Schedule jobs based on the scheduling policy
         if(schedulingPolicyName.equals("FCFS")) {
             BlockingQueue<BatchJob> fcfsQueue = schedulingPolicy.fcfs_scheduling(jobQueue);
             this.setJobQueue(fcfsQueue);

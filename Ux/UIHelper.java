@@ -40,7 +40,6 @@ public class UIHelper {
     public void run(String job, SchedulingThread fcfSchedulingThread) {
         String[] words = job.split("run ");
         fcfSchedulingThread.run(words[1]);
-        System.out.println("Job was submitted");
     }
     
     // TODO

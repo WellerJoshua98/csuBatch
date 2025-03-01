@@ -16,13 +16,28 @@ public class MainClass {
         System.out.println("Welcome to CSU BatchJob Please Enter a Command");
         System.out.println("Enter help for more options");
 
-        try (Scanner keyboard = new Scanner(System.in)) {
-            String command = keyboard.nextLine();
-            
-            while(!command.equals("quit")){
-                helper.commandFunction(command, fcfSchedulingThread);
-                command = keyboard.nextLine();
+        Scanner keyboardScanner = new Scanner(System.in); // No try-with-resources here
+
+        System.out.println("Enter lines of text. Press Enter after each line.");
+        System.out.println("Type 'quit' (case-sensitive) to exit.");
+
+        while (true) {
+            String line = "";
+            try {
+                line = keyboardScanner.nextLine();
+
+                if (line.equals("quit")) {
+                    break; // Exit the loop if the user enters "quit"
+                }
+                helper.commandFunction(line, fcfSchedulingThread);
+                System.out.println("Please Enter a new command");
+            } catch (IllegalStateException e){
+                System.out.println("Scanner closed, closing program");
+                break;
             }
         }
+
+        System.out.println("Exiting out CSUBatch");
+        keyboardScanner.close(); // Close the scanner when done
     }
 }
