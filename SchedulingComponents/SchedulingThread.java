@@ -61,6 +61,7 @@ public class SchedulingThread extends Thread {
      * Run the scheduling thread
      */
     public void run(String userInput) {
+        System.out.println("Scheduling thread started");
         SchedulingPolicy schedulingPolicy = new SchedulingPolicy();
         //Add jobs to the queue
         String[] jobDetails = userInput.split("\\s+");
@@ -90,6 +91,7 @@ public class SchedulingThread extends Thread {
             BlockingQueue<BatchJob> sjfQueue = schedulingPolicy.sjf_scheduling(jobQueue);
             this.setJobQueue(sjfQueue);
         } else if(schedulingPolicyName.equals("Priority")) {
+            System.out.println("Priority scheduling");
             BlockingQueue<BatchJob> priority = schedulingPolicy.priority_scheduling(jobQueue);
             this.setJobQueue(priority);
         }
@@ -98,41 +100,12 @@ public class SchedulingThread extends Thread {
     public void printJobQueue() {
         System.out.println("Jobs in the queue:");
         for (BatchJob job : jobQueue) {
-            System.out.println(job);
+            System.out.println(job.getJobName()+  ", Priority: " + job.getPriority() + ", Execution time: " + job.getExecutionTime());
         }
     }
 
     public static void main(String[] args) {
-        UIHelper helper = new UIHelper();
-        System.out.println("Welcome to CSU BatchJob Please Enter a Command");
-        System.out.println("Enter help for more options");
-
-        Scanner keyboard = new Scanner(System.in);
-        String command = keyboard.nextLine();
-
-        while(!command.equals("quit")){
-            helper.commandFunction(command);
-            command = keyboard.nextLine();
-        }
-        keyboard.close();
-
-        //Demo of scheduling thread
-        BlockingQueue<BatchJob> jobQueue = new LinkedBlockingQueue<>();
-        for (int i = 1; i <= 10; i++) {
-            BatchJob job = new BatchJob("Job" + i, i * 10, 10 - i);
-            try {
-                jobQueue.put(job);
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-            }
-        }
-
         
-        SchedulingThread schedulingThread = new SchedulingThread(jobQueue, "SJF");
-        schedulingThread.printJobQueue();
-        schedulingThread.start();
-        System.err.println("After scheduling thread started");
-        schedulingThread.printJobQueue();
     };
     
 }

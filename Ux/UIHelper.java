@@ -1,6 +1,9 @@
 package Ux;
 
+import SchedulingComponents.SchedulingPolicy;
 import SchedulingComponents.SchedulingThread;
+import DispatchingComponents.DispatchingThread;
+import PerformanceEvaluationComponents.PerformanceEvaluation;
 
 
 
@@ -17,8 +20,15 @@ public class UIHelper {
         } else if (command.equals("list")) {
             list();
         } else if (command.contains("test")) {
-            test();
-        } else {
+            test(command);
+        } else if(command.contains("sjf")){
+            switchPolicy("SJF");
+        } else if(command.contains("fcfs")){
+            switchPolicy("FCFS");
+        } else if(command.contains("priority")){
+            switchPolicy("Priority");
+        }
+         else {
             errorHelperBatch();
         }
     }
@@ -47,8 +57,44 @@ public class UIHelper {
         System.out.println("display job status");
     }
 
-    public void test(){
-        System.out.println("run and display test");
+    public void test(String userInput){
+        String[] testParameters = userInput.split("");
+        if(testParameters.length == 7){
+            PerformanceEvaluation performanceEvaluation = new PerformanceEvaluation();
+            performanceEvaluation.setPolicy(testParameters[2]);
+            performanceEvaluation.setNumOfJobs(Integer.parseInt(testParameters[3]));
+            performanceEvaluation.setPriorityLevels(Integer.parseInt(testParameters[4]));
+            performanceEvaluation.setMinCPUTime(Integer.parseInt(testParameters[5]));
+            performanceEvaluation.setMaxCPUTime(Integer.parseInt(testParameters[6]));
+            performanceEvaluation.evaluation();
+        } else {
+            System.out.println("Invalid input. Use help -test for proper input format");
+        }
+    }
+
+    /*
+     * Switch the scheduling policy
+     * @param policy
+     */
+    public void switchPolicy(String policy){
+        DispatchingThread dispatchingThread = new DispatchingThread();
+        SchedulingPolicy schedulingPolicy = new SchedulingPolicy();
+        // Switch the scheduling policy
+        switch (policy) {
+            case "FCFS":
+                dispatchingThread.setJobQueue(schedulingPolicy.fcfs_scheduling(dispatchingThread.getJobQueue()));
+                break;
+        
+            case "SJF":
+                dispatchingThread.setJobQueue(schedulingPolicy.sjf_scheduling(dispatchingThread.getJobQueue()));
+                break;
+            case "Priority":
+                dispatchingThread.setJobQueue(schedulingPolicy.priority_scheduling(dispatchingThread.getJobQueue()));
+                break;    
+            default:
+                break;
+        }
+        System.out.println("Scheduling policy is switched to " + policy + "All the " +  dispatchingThread.getJobQueue().size()  + " waiting jobs have been rescheduled.");
     }
 
     public void errorHelperBatch(){

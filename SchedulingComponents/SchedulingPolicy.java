@@ -1,4 +1,7 @@
 package SchedulingComponents;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
@@ -28,37 +31,11 @@ public class SchedulingPolicy {
      * @return sjfQueue
      */
     public BlockingQueue<BatchJob> sjf_scheduling(BlockingQueue<BatchJob> jobQueue) {
-        BlockingQueue<BatchJob> sjfQueue = new LinkedBlockingQueue<>();
-        SchedulingThread schedulingThread = new SchedulingThread(sjfQueue, "sjf");
-        schedulingThread.start();
+        List<BatchJob> jobList = new ArrayList<>();
+        jobQueue.drainTo(jobList);
+        Collections.sort(jobList, (job1, job2) -> job1.getExecutionTime() - job2.getExecutionTime());
+        BlockingQueue<BatchJob> sjfQueue = new LinkedBlockingQueue<>(jobList);
 
-        //Get the shortest job from the queue
-        while (!jobQueue.isEmpty()) {
-            BatchJob shortestJob = null;
-            for (BatchJob job : jobQueue) {
-                //Set the first job as the shortest job sicne it shortest job is null
-                if (shortestJob == null){
-                    shortestJob = job;
-                }
-                if (job.getExecutionTime() < shortestJob.getExecutionTime()) {
-                    shortestJob = job;
-                }
-            }
-            
-            sjfQueue.add(shortestJob);
-        }
-        
-
-        //Add jobs to the queue based on their execution time
-        for (BatchJob job : jobQueue) {
-            
-            for (BatchJob jobInQueue : sjfQueue) {
-                if (job.getExecutionTime() < jobInQueue.getExecutionTime()) {
-                    sjfQueue.add(job);
-                }
-            }
-           
-        }
 
         return sjfQueue;
     }
@@ -69,37 +46,11 @@ public class SchedulingPolicy {
      * @return sjfQueue
      */
     public BlockingQueue<BatchJob> priority_scheduling(BlockingQueue<BatchJob> jobQueue) {
-        BlockingQueue<BatchJob> priorityQueue = new LinkedBlockingQueue<>();
-        SchedulingThread schedulingThread = new SchedulingThread(priorityQueue, "priority");
-        schedulingThread.start();
+        List<BatchJob> jobList = new ArrayList<>();
+        jobQueue.drainTo(jobList);
+        Collections.sort(jobList, (job1, job2) -> job1.getPriority() - job2.getPriority());
+        BlockingQueue<BatchJob> priorityQueue = new LinkedBlockingQueue<>(jobList);
 
-        //Get the highest priority job from the queue
-        while (!jobQueue.isEmpty()) {
-            BatchJob highestPriorityJob = null;
-            for (BatchJob job : jobQueue) {
-                //Set the first job as the highest priority job since it highest priority job is null
-                if (highestPriorityJob == null){
-                    highestPriorityJob = job;
-                }
-                if (job.getExecutionTime() < highestPriorityJob.getExecutionTime()) {
-                    highestPriorityJob = job;
-                }
-            }
-            
-            priorityQueue.add(highestPriorityJob);
-        }
-        
-
-        //Add jobs to the queue based on their execution time
-        for (BatchJob job : jobQueue) {
-            
-            for (BatchJob jobInQueue : priorityQueue) {
-                if (job.getExecutionTime() < jobInQueue.getExecutionTime()) {
-                    priorityQueue.add(job);
-                }
-            }
-           
-        }
         return priorityQueue;
     }
 }
