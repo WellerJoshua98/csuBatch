@@ -1,6 +1,7 @@
 package SchedulingComponents;
 import BatchJobsComponents.BatchJob;
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 
 public class SchedulingThread extends Thread {
 
@@ -60,6 +61,7 @@ public class SchedulingThread extends Thread {
      * Run the scheduling thread
      */
     public void run(String userInput) {
+        System.out.println("Scheduling thread started");
         SchedulingPolicy schedulingPolicy = new SchedulingPolicy();
         //Add jobs to the queue
         String[] jobDetails = userInput.split("\\s+");
@@ -89,9 +91,21 @@ public class SchedulingThread extends Thread {
             BlockingQueue<BatchJob> sjfQueue = schedulingPolicy.sjf_scheduling(jobQueue);
             this.setJobQueue(sjfQueue);
         } else if(schedulingPolicyName.equals("Priority")) {
+            System.out.println("Priority scheduling");
             BlockingQueue<BatchJob> priority = schedulingPolicy.priority_scheduling(jobQueue);
             this.setJobQueue(priority);
         }
     }
+
+    public void printJobQueue() {
+        System.out.println("Jobs in the queue:");
+        for (BatchJob job : jobQueue) {
+            System.out.println(job.getJobName()+  ", Priority: " + job.getPriority() + ", Execution time: " + job.getExecutionTime());
+        }
+    }
+
+    public static void main(String[] args) {
+        
+    };
     
 }
