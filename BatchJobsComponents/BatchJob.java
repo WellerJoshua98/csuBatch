@@ -4,11 +4,15 @@ public class BatchJob {
     private String jobName;
     private int executionTime;
     private int priority;
+    private String arrivalTime;
+    private String status;
 
-    public BatchJob(String jobName, int executionTime, int priority) {
+    public BatchJob(String jobName, int executionTime, int priority, String arrivalTime, String status) {
         this.jobName = jobName;
         this.executionTime = executionTime;
         this.priority = priority;
+        this.arrivalTime = arrivalTime;
+        this.status = status;
     }
 
     public String getJobName() {
@@ -33,6 +37,22 @@ public class BatchJob {
 
     public void setPriority(int priority) {
         this.priority = priority;
+    }
+
+    public String getArrivalTime() {
+        return arrivalTime;
+    }
+
+    public void setArrivalTime(String arrivalTime) {
+        this.arrivalTime = arrivalTime;
+    }
+
+    public String getStatus() {
+        return arrivalTime;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 
     public void execute(){
