@@ -45,13 +45,11 @@ public class UIHelper {
         System.out.println("quit: exit CSUbatch");
     }
 
-    // TODO
     public void run(String job, SchedulingThread fcfSchedulingThread) {
         String[] words = job.split("run ");
         fcfSchedulingThread.run(words[1]);
     }
     
-    // TODO
     public void list() {
         System.out.println("display job status");
     }
