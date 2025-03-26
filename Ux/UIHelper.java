@@ -1,9 +1,9 @@
 package Ux;
 
-import SchedulingComponents.SchedulingPolicy;
-import SchedulingComponents.SchedulingThread;
 import DispatchingComponents.DispatchingThread;
 import PerformanceEvaluationComponents.PerformanceEvaluation;
+import SchedulingComponents.SchedulingPolicy;
+import SchedulingComponents.SchedulingThread;
 
 
 
@@ -12,7 +12,7 @@ public class UIHelper {
     
     public void commandFunction(String command, SchedulingThread fcfSchedulingThread){
         if(command.equals("exit")){
-            System.out.println("Good-bye");
+            System.out.println("Enter quit to exit the program");
         } else if (command.equals("help")){
             help();
         } else if (command.contains("run")){
@@ -27,9 +27,8 @@ public class UIHelper {
             switchPolicy("FCFS");
         } else if(command.contains("priority")){
             switchPolicy("Priority");
-        }
-         else {
-            errorHelperBatch();
+        } else {
+            errorHelperBatch(command);
         }
     }
     
@@ -97,8 +96,19 @@ public class UIHelper {
         System.out.println("Scheduling policy is switched to " + policy + "All the " +  dispatchingThread.getJobQueue().size()  + " waiting jobs have been rescheduled.");
     }
 
-    public void errorHelperBatch(){
-        System.out.println("The command you entered was not found, Please try again");
+    public void errorHelperBatch(String command){
+        if(command.startsWith("r")) {
+            System.out.println("Were trying to use the command run?");
+            System.out.println("run <job> <time> <pri>: submit a job named <job>");
+        } else if (command.startsWith("h")) {
+            System.out.println("Were trying to use the command help?");
+        } else if (command.startsWith("l")){
+            System.out.println("Were trying to use the command list?");
+        } else if (command.startsWith("t")){
+            System.out.println("Were trying to use the command test?");
+        } else {
+            System.out.println("The command you entered was not found, Please try again or type help to to see command options");
+        }
     }
     
 
