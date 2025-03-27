@@ -1,5 +1,7 @@
 package SchedulingComponents;
 import BatchJobsComponents.BatchJob;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
@@ -67,7 +69,14 @@ public class SchedulingThread extends Thread {
         String[] jobDetails = userInput.split("\\s+");
         if(!userInput.equals("exit")) {
             if(jobDetails.length == 3) {
-                BatchJob job = new BatchJob(jobDetails[0], Integer.parseInt(jobDetails[1]), Integer.parseInt(jobDetails[2]));
+                LocalTime currentTime = LocalTime.now();
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm:ss");
+                String formattedTime = currentTime.format(formatter);
+                String status = "";
+                if(jobQueue.isEmpty()){
+                    status = "run";
+                }
+                BatchJob job = new BatchJob(jobDetails[0], Integer.parseInt(jobDetails[1]), Integer.parseInt(jobDetails[2]), formattedTime, status);
                 try {
                     jobQueue.put(job);
                     System.out.println("Job " + job.getJobName() + " was submitted");

@@ -1,5 +1,6 @@
 package Ux;
 
+import BatchJobsComponents.BatchJob;
 import DispatchingComponents.DispatchingThread;
 import PerformanceEvaluationComponents.PerformanceEvaluation;
 import SchedulingComponents.SchedulingPolicy;
@@ -18,7 +19,7 @@ public class UIHelper {
         } else if (command.contains("run")){
             run(command, fcfSchedulingThread);
         } else if (command.equals("list")) {
-            list();
+            list(fcfSchedulingThread);
         } else if (command.contains("test")) {
             test(command);
         } else if(command.contains("sjf")){
@@ -50,8 +51,13 @@ public class UIHelper {
         fcfSchedulingThread.run(words[1]);
     }
     
-    public void list() {
-        System.out.println("display job status");
+    public void list(SchedulingThread jobs) {
+        System.out.println("Total numbe of jobs in the queue: ");
+        System.out.println("Scheduling Policy: ");
+        System.out.println("Name CPU_Time Pri Arrival_time Progress");
+        for(BatchJob job: jobs.getJobQueue()){
+            System.out.println(job.toString());
+        }
     }
 
     public void test(String userInput){

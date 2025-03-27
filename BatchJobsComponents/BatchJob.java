@@ -103,6 +103,12 @@ public class BatchJob {
         this.status = status;
     }
 
+    @Override
+    public String toString() {
+        return String.format("Job Name: %s, Execution Time: %d, Priority: %d, Arrival Time: %s, Status: %s",
+                jobName, executionTime, priority, arrivalTime, status);
+    }
+
     public void execute(){
         //System.out.println("Executing job: " + jobName);
         
