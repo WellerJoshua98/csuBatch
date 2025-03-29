@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 
 import BatchJobsComponents.BatchJob;
 import DispatchingComponents.DispatchingThread;
@@ -17,7 +18,7 @@ public class PerformanceEvaluation {
     private int priorityLevels;
     private int minCPUTime;
     private int maxCPUTime;
-    private BlockingQueue<BatchJob> jobs;
+    private BlockingQueue<BatchJob> jobs = new LinkedBlockingQueue<>();
 
     public PerformanceEvaluation(String benchMark, String policy, int numOfJobs, int priorityLevels, int minCPUTime, int maxCPUTime) {
         this.benchMark = benchMark;
@@ -106,6 +107,7 @@ public class PerformanceEvaluation {
         } 
 
         dispatchingThread.start();
+        System.out.println("Performance Evaluation is running...");
         try{
             dispatchingThread.join();
         }catch(InterruptedException e){

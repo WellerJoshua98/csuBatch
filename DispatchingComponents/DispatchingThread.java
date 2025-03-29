@@ -31,9 +31,17 @@ public class DispatchingThread extends Thread {
         this.executionTime = executionTime;
 
         //Enables the thread CPU time measurement
-        if(!threadMXBean.isThreadCpuTimeEnabled()){
-            threadMXBean.setThreadCpuTimeEnabled(true);
+        // if(!threadMXBean.isThreadCpuTimeEnabled()){
+        //     threadMXBean.setThreadCpuTimeEnabled(true);
+        // }
+
+        
+        if (threadMXBean.isCurrentThreadCpuTimeSupported()) {
+            threadMXBean.setThreadCpuTimeEnabled(true); // Enable CPU time measurement
+        } else {
+            System.out.println("CPU time measurement is not supported.");
         }
+        
     }
 
     public DispatchingThread(BlockingQueue<BatchJob> jobQueue, int executionTime, String policy) {
@@ -45,10 +53,25 @@ public class DispatchingThread extends Thread {
         // if(!threadMXBean.isThreadCpuTimeEnabled()){
         //     threadMXBean.setThreadCpuTimeEnabled(true);
         // }
+
+        
+        if (threadMXBean.isCurrentThreadCpuTimeSupported()) {
+            threadMXBean.setThreadCpuTimeEnabled(true); // Enable CPU time measurement
+        } else {
+            System.out.println("CPU time measurement is not supported.");
+        }
+        
     }
 
     public DispatchingThread(BlockingQueue<BatchJob> jobQueue) {
         this.jobQueue = jobQueue;
+        
+        if (threadMXBean.isCurrentThreadCpuTimeSupported()) {
+            threadMXBean.setThreadCpuTimeEnabled(true); // Enable CPU time measurement
+        } else {
+            System.out.println("CPU time measurement is not supported.");
+        }
+        
     }
 
     public DispatchingThread(){}
@@ -158,7 +181,7 @@ public class DispatchingThread extends Thread {
         return cpuTimes.stream()
         .mapToLong(Long::longValue)
         .average()
-        .orElse(0.0)/1000000000;
+        .orElse(0.0)/100_000_000.0;
     }
 
     /**
@@ -169,7 +192,7 @@ public class DispatchingThread extends Thread {
         return turnaroundTimes.stream()
         .mapToLong(Long::longValue)
         .average()
-        .orElse(0.0)/1000000000;
+        .orElse(0.0)/1000.0;
     }
 
     /**
@@ -180,7 +203,7 @@ public class DispatchingThread extends Thread {
         return waitingTimes.stream()
         .mapToLong(Long::longValue)
         .average()
-        .orElse(0.0)/1000000000;
+        .orElse(0.0)/1000.0;
     }
 
     private double calculateThroughput(){
@@ -200,7 +223,7 @@ public class DispatchingThread extends Thread {
             int jobExecutionTime = 0;
             this.startTime = System.currentTimeMillis();
             //Retrieves and removes the head of this queue and executes the job
-            System.out.println("Dispatching thread started");
+            //System.out.println("Dispatching thread started");
             while(!jobQueue.isEmpty()){
                 BatchJob job = jobQueue.poll();
 
@@ -221,7 +244,9 @@ public class DispatchingThread extends Thread {
                 turnaroundTimes.add(job.getTurnaroundTime());
 
                 long endCpuTime = threadMXBean.getCurrentThreadCpuTime();
+                System.out.println(startCpuTime + " " + endCpuTime);
                 long cpuTime = endCpuTime - startCpuTime;
+                
                 cpuTimes.add(cpuTime);
 
                 jobExecutionTime += job.getExecutionTime();
@@ -253,10 +278,10 @@ public class DispatchingThread extends Thread {
             //long endTime = System.nanoTime();
             //long elapsedTime = (endTime - startTime)/ 1000000000;
             System.out.println("Total number of jobs submitted: " + jobCount);
-            System.out.println("Average turnaround time: " + getAverageTurnaroundTime() + " seconds");
+            System.out.println("Average turnaround time: " + String.format("%.2f", getAverageTurnaroundTime()) + " seconds");
             System.out.println("Average CPU time: " + getAverageCpuTime() + " seconds");
-            System.out.println("Average waiting time: " + getAverageWaitingTime() + " seconds");
-            System.out.println("Throughput: " + throughput + " No ./second");
+            System.out.println("Average waiting time: " + String.format("%.2f", getAverageWaitingTime()) + " seconds");
+            System.out.println("Throughput: " + String.format("%.3f", throughput) + " No ./second");
         } catch (InterruptedException e){
             Thread.currentThread().interrupt();
             System.out.println("Thread interrupted. Exiting...");
