@@ -58,7 +58,7 @@ public class UIHelper {
     }
 
     public void test(String userInput){
-        String[] testParameters = userInput.split("");
+        String[] testParameters = userInput.split(" ");
         if(testParameters.length == 7){
             PerformanceEvaluation performanceEvaluation = new PerformanceEvaluation();
             performanceEvaluation.setPolicy(testParameters[2]);

@@ -84,7 +84,7 @@ public class BatchJob {
     }
 
     public void execute(){
-        System.out.println("Executing job: " + jobName);
+        //System.out.println("Executing job: " + jobName);
         
         //simulate job execution time
         try {
