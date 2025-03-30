@@ -89,6 +89,9 @@ public class SchedulingThread extends Thread {
                 
             } else {
                 System.out.println("Invalid input. Please enter job name, execution time and priority separated by space.");
+                
+                System.out.println("Were you trying to use the command run?");
+                System.out.println("Try run <job> <time> <pri>: submit a job named <job>");
             }
         }
 

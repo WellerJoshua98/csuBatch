@@ -102,14 +102,14 @@ public class UIHelper {
 
     public void errorHelperBatch(String command){
         if(command.startsWith("r")) {
-            System.out.println("Were trying to use the command run?");
+            System.out.println("Were you trying to use the command run?");
             System.out.println("run <job> <time> <pri>: submit a job named <job>");
         } else if (command.startsWith("h")) {
-            System.out.println("Were trying to use the command help?");
+            System.out.println("Were you trying to use the command help?");
         } else if (command.startsWith("l")){
-            System.out.println("Were trying to use the command list?");
+            System.out.println("Were you trying to use the command list?");
         } else if (command.startsWith("t")){
-            System.out.println("Were trying to use the command test?");
+            System.out.println("Were you trying to use the command test?");
         } else {
             System.out.println("The command you entered was not found, Please try again or type help to to see command options");
         }
