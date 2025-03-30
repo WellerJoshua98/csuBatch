@@ -12,6 +12,12 @@ public class SchedulingThread extends Thread {
     }
     private BlockingQueue<BatchJob> jobQueue;
     private String schedulingPolicyName;
+    private int jobCount = 0;
+
+
+    public int getTotalJobs(){
+        return jobCount;
+    }
 
 
     public SchedulingThread(BlockingQueue<BatchJob> jobQueue, String schedulingPolicyName) {
@@ -76,19 +82,30 @@ public class SchedulingThread extends Thread {
                 if(jobQueue.isEmpty()){
                     status = "run";
                 }
-                BatchJob job = new BatchJob(jobDetails[0], Integer.parseInt(jobDetails[1]), Integer.parseInt(jobDetails[2]), formattedTime, status);
+                BatchJob job = new BatchJob(status, 0, 0, formattedTime, status);
                 try {
-                    jobQueue.put(job);
-                    System.out.println("Job " + job.getJobName() + " was submitted");
-                    System.out.println("Total number of jobs in the queue: " + jobQueue.size());
-                    System.out.println("Expected waiting time: " + getTotalTime());
-                    System.out.println("Scheduling Policy " + getSchedulingPolicy());
-                } catch (InterruptedException e) {
-                    Thread.currentThread().interrupt();
+                    job = new BatchJob(jobDetails[0], Integer.parseInt(jobDetails[1]), Integer.parseInt(jobDetails[2]), formattedTime, status);
+                    try {
+                        jobQueue.put(job);
+                        System.out.println("Job " + job.getJobName() + " was submitted");
+                        System.out.println("Total number of jobs in the queue: " + jobQueue.size());
+                        System.out.println("Expected waiting time: " + getTotalTime());
+                        System.out.println("Scheduling Policy " + getSchedulingPolicy());
+                    } catch (InterruptedException e) {
+                        Thread.currentThread().interrupt();
+                    }
+                } catch (Exception e) {
+                    System.out.println("Invalid input. Please enter job name, execution time and priority separated by space.");
+                    System.out.println("Input for <pri> should be a number");
+
+                    System.out.println("Were you trying to use the command run?");
+                    System.out.println("Try run <job> <time> <pri>: submit a job named <job>");
                 }
+                
                 
             } else {
                 System.out.println("Invalid input. Please enter job name, execution time and priority separated by space.");
+                System.out.println("Input for <time> should be a number");
                 
                 System.out.println("Were you trying to use the command run?");
                 System.out.println("Try run <job> <time> <pri>: submit a job named <job>");
