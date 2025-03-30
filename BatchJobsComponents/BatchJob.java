@@ -7,12 +7,16 @@ public class BatchJob {
     private long submissionTime;
     private long completionTime;
     private long startTime;
+    private String arrivalTime;
+    private String status;
 
-    public BatchJob(String jobName, int executionTime, int priority) {
+    public BatchJob(String jobName, int executionTime, int priority, String arrivalTime, String status) {
         this.jobName = jobName;
         this.executionTime = executionTime;
         this.priority = priority;
         this.submissionTime = System.currentTimeMillis();
+        this.arrivalTime = arrivalTime;
+        this.status = status;
     }
 
     public String getJobName() {
@@ -81,6 +85,28 @@ public class BatchJob {
      */
     public long getWaitTime(){
         return startTime - submissionTime;
+    }
+
+    public String getArrivalTime() {
+        return arrivalTime;
+    }
+
+    public void setArrivalTime(String arrivalTime) {
+        this.arrivalTime = arrivalTime;
+    }
+
+    public String getStatus() {
+        return arrivalTime;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    @Override
+    public String toString() {
+        return String.format("Job Name: %s, Execution Time: %d, Priority: %d, Arrival Time: %s, Status: %s",
+                jobName, executionTime, priority, arrivalTime, status);
     }
 
     public void execute(){

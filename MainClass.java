@@ -35,6 +35,12 @@ public class MainClass {
         }
 
         System.out.println("Exiting out CSUBatch");
+        System.out.println("Total number of job submitted: " + fcfSchedulingThread.getTotalJobs());
+        System.out.println("Average turnaround time:       ");
+        System.out.println("Average CPU time:              ");
+        System.out.println("Average waiting time:          ");
+        System.out.println("Throughput:                    ");
+
         keyboardScanner.close(); // Close the scanner when done
     }
 }

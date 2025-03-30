@@ -1,9 +1,10 @@
 package Ux;
 
-import SchedulingComponents.SchedulingPolicy;
-import SchedulingComponents.SchedulingThread;
+import BatchJobsComponents.BatchJob;
 import DispatchingComponents.DispatchingThread;
 import PerformanceEvaluationComponents.PerformanceEvaluation;
+import SchedulingComponents.SchedulingPolicy;
+import SchedulingComponents.SchedulingThread;
 
 
 
@@ -12,13 +13,13 @@ public class UIHelper {
     
     public void commandFunction(String command, SchedulingThread fcfSchedulingThread){
         if(command.equals("exit")){
-            System.out.println("Good-bye");
+            System.out.println("Enter quit to exit the program");
         } else if (command.equals("help")){
             help();
         } else if (command.contains("run")){
             run(command, fcfSchedulingThread);
         } else if (command.equals("list")) {
-            list();
+            list(fcfSchedulingThread);
         } else if (command.contains("test")) {
             test(command);
         } else if(command.contains("sjf")){
@@ -27,9 +28,8 @@ public class UIHelper {
             switchPolicy("FCFS");
         } else if(command.contains("priority")){
             switchPolicy("Priority");
-        }
-         else {
-            errorHelperBatch();
+        } else {
+            errorHelperBatch(command);
         }
     }
     
@@ -46,15 +46,18 @@ public class UIHelper {
         System.out.println("quit: exit CSUbatch");
     }
 
-    // TODO
     public void run(String job, SchedulingThread fcfSchedulingThread) {
         String[] words = job.split("run ");
         fcfSchedulingThread.run(words[1]);
     }
     
-    // TODO
-    public void list() {
-        System.out.println("display job status");
+    public void list(SchedulingThread jobs) {
+        System.out.println("Total numbe of jobs in the queue: ");
+        System.out.println("Scheduling Policy: ");
+        System.out.println("Name CPU_Time Pri Arrival_time Progress");
+        for(BatchJob job: jobs.getJobQueue()){
+            System.out.println(job.toString());
+        }
     }
 
     public void test(String userInput){
@@ -97,8 +100,19 @@ public class UIHelper {
         System.out.println("Scheduling policy is switched to " + policy + "All the " +  dispatchingThread.getJobQueue().size()  + " waiting jobs have been rescheduled.");
     }
 
-    public void errorHelperBatch(){
-        System.out.println("The command you entered was not found, Please try again");
+    public void errorHelperBatch(String command){
+        if(command.startsWith("r")) {
+            System.out.println("Were you trying to use the command run?");
+            System.out.println("run <job> <time> <pri>: submit a job named <job>");
+        } else if (command.startsWith("h")) {
+            System.out.println("Were you trying to use the command help?");
+        } else if (command.startsWith("l")){
+            System.out.println("Were you trying to use the command list?");
+        } else if (command.startsWith("t")){
+            System.out.println("Were you trying to use the command test?");
+        } else {
+            System.out.println("The command you entered was not found, Please try again or type help to to see command options");
+        }
     }
     
 

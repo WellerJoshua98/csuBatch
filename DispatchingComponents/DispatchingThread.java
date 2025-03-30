@@ -1,14 +1,12 @@
 package DispatchingComponents;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.lang.management.ManagementFactory;
-import java.lang.management.ThreadMXBean;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.LinkedBlockingQueue;
-
 import BatchJobsComponents.BatchJob;
 import SchedulingComponents.SchedulingThread;
+import java.lang.management.ManagementFactory;
+import java.lang.management.ThreadMXBean;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.BlockingQueue;
 
 public class DispatchingThread extends Thread {
     private SchedulingThread schedulingThread;

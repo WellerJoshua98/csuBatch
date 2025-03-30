@@ -1,5 +1,7 @@
 package SchedulingComponents;
 import BatchJobsComponents.BatchJob;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
@@ -10,6 +12,12 @@ public class SchedulingThread extends Thread {
     }
     private BlockingQueue<BatchJob> jobQueue;
     private String schedulingPolicyName;
+    private int jobCount = 0;
+
+
+    public int getTotalJobs(){
+        return jobCount;
+    }
 
 
     public SchedulingThread(BlockingQueue<BatchJob> jobQueue, String schedulingPolicyName) {
@@ -67,19 +75,40 @@ public class SchedulingThread extends Thread {
         String[] jobDetails = userInput.split("\\s+");
         if(!userInput.equals("exit")) {
             if(jobDetails.length == 3) {
-                BatchJob job = new BatchJob(jobDetails[0], Integer.parseInt(jobDetails[1]), Integer.parseInt(jobDetails[2]));
-                try {
-                    jobQueue.put(job);
-                    System.out.println("Job " + job.getJobName() + " was submitted");
-                    System.out.println("Total number of jobs in the queue: " + jobQueue.size());
-                    System.out.println("Expected waiting time: " + getTotalTime());
-                    System.out.println("Scheduling Policy " + getSchedulingPolicy());
-                } catch (InterruptedException e) {
-                    Thread.currentThread().interrupt();
+                LocalTime currentTime = LocalTime.now();
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm:ss");
+                String formattedTime = currentTime.format(formatter);
+                String status = "";
+                if(jobQueue.isEmpty()){
+                    status = "run";
                 }
+                BatchJob job = new BatchJob(status, 0, 0, formattedTime, status);
+                try {
+                    job = new BatchJob(jobDetails[0], Integer.parseInt(jobDetails[1]), Integer.parseInt(jobDetails[2]), formattedTime, status);
+                    try {
+                        jobQueue.put(job);
+                        System.out.println("Job " + job.getJobName() + " was submitted");
+                        System.out.println("Total number of jobs in the queue: " + jobQueue.size());
+                        System.out.println("Expected waiting time: " + getTotalTime());
+                        System.out.println("Scheduling Policy " + getSchedulingPolicy());
+                    } catch (InterruptedException e) {
+                        Thread.currentThread().interrupt();
+                    }
+                } catch (Exception e) {
+                    System.out.println("Invalid input. Please enter job name, execution time and priority separated by space.");
+                    System.out.println("Input for <pri> should be a number");
+
+                    System.out.println("Were you trying to use the command run?");
+                    System.out.println("Try run <job> <time> <pri>: submit a job named <job>");
+                }
+                
                 
             } else {
                 System.out.println("Invalid input. Please enter job name, execution time and priority separated by space.");
+                System.out.println("Input for <time> should be a number");
+                
+                System.out.println("Were you trying to use the command run?");
+                System.out.println("Try run <job> <time> <pri>: submit a job named <job>");
             }
         }
 
