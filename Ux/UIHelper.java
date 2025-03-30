@@ -52,8 +52,8 @@ public class UIHelper {
     }
     
     public void list(SchedulingThread jobs) {
-        System.out.println("Total numbe of jobs in the queue: ");
-        System.out.println("Scheduling Policy: ");
+        System.out.println("Total numbe of jobs in the queue: " + jobs.getTotalJobs());
+        System.out.println("Scheduling Policy: " + jobs.getName());
         System.out.println("Name CPU_Time Pri Arrival_time Progress");
         for(BatchJob job: jobs.getJobQueue()){
             System.out.println(job.toString());
