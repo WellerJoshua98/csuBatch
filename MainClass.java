@@ -1,6 +1,6 @@
 
 import BatchJobsComponents.BatchJob;
-import SchedulingComponents.SchedulingThread;
+import DispatchingComponents.DispatchingThread;
 import Ux.UIHelper;
 import java.util.Scanner;
 import java.util.concurrent.BlockingQueue;
@@ -10,11 +10,12 @@ public class MainClass {
     
     public static void main(String[] args) {
         UIHelper helper = new UIHelper();
-        BlockingQueue<BatchJob> fcfs = new LinkedBlockingQueue<>();
-        SchedulingThread fcfSchedulingThread  = new SchedulingThread(fcfs, "fcfs");
+        BlockingQueue<BatchJob> jobs = new LinkedBlockingQueue<>();
+        DispatchingThread dispatchingThread = new DispatchingThread(jobs, 0, "priority");
 
         System.out.println("Welcome to CSU BatchJob Please Enter a Command");
         System.out.println("Enter help for more options");
+        dispatchingThread.run();
 
         Scanner keyboardScanner = new Scanner(System.in); // No try-with-resources here
 
@@ -26,7 +27,7 @@ public class MainClass {
                 if (line.equals("quit")) {
                     break; // Exit the loop if the user enters "quit"
                 }
-                helper.commandFunction(line, fcfSchedulingThread);
+                helper.commandFunction(line, dispatchingThread.getSchedulingThread());
                 System.out.println("Please Enter a new command");
             } catch (IllegalStateException e){
                 System.out.println("Scanner closed, closing program");
@@ -35,7 +36,7 @@ public class MainClass {
         }
 
         System.out.println("Exiting out CSUBatch");
-        System.out.println("Total number of job submitted: " + fcfSchedulingThread.getTotalJobs());
+        System.out.println("Total number of job submitted: " + dispatchingThread.getSchedulingThread().getTotalJobs());
         System.out.println("Average turnaround time:       ");
         System.out.println("Average CPU time:              ");
         System.out.println("Average waiting time:          ");

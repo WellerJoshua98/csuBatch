@@ -1,15 +1,11 @@
 package PerformanceEvaluationComponents;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.LinkedBlockingQueue;
-
 import BatchJobsComponents.BatchJob;
 import DispatchingComponents.DispatchingThread;
 import SchedulingComponents.SchedulingPolicy;
-import SchedulingComponents.SchedulingThread;
+import java.util.Random;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 
 public class PerformanceEvaluation {
     private String benchMark;
@@ -85,7 +81,7 @@ public class PerformanceEvaluation {
         for(int i = 1; i <= numOfJobs; i++){
             int executionTime = random.nextInt(maxCPUTime - minCPUTime + 1) + minCPUTime;
             int priority = random.nextInt(priorityLevels) + 1;
-            BatchJob job = new BatchJob("Job" + i, executionTime, priority);
+            BatchJob job = new BatchJob("Job" + i, executionTime, priority, "0", "");
             jobs.add(job);
         }
     }

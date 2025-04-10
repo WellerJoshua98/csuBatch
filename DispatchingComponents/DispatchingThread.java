@@ -28,6 +28,8 @@ public class DispatchingThread extends Thread {
         this.jobQueue = jobQueue;
         this.executionTime = executionTime;
 
+        schedulingThread = new SchedulingThread(jobQueue, policy);
+
         //Enables the thread CPU time measurement
         // if(!threadMXBean.isThreadCpuTimeEnabled()){
         //     threadMXBean.setThreadCpuTimeEnabled(true);
@@ -47,6 +49,8 @@ public class DispatchingThread extends Thread {
         this.executionTime = executionTime;
         this.policy = policy;
 
+        schedulingThread = new SchedulingThread(jobQueue, policy);
+
         //Enables the thread CPU time measurement
         // if(!threadMXBean.isThreadCpuTimeEnabled()){
         //     threadMXBean.setThreadCpuTimeEnabled(true);
@@ -63,6 +67,8 @@ public class DispatchingThread extends Thread {
 
     public DispatchingThread(BlockingQueue<BatchJob> jobQueue) {
         this.jobQueue = jobQueue;
+
+        schedulingThread = new SchedulingThread(jobQueue, policy);
         
         if (threadMXBean.isCurrentThreadCpuTimeSupported()) {
             threadMXBean.setThreadCpuTimeEnabled(true); // Enable CPU time measurement
@@ -72,7 +78,13 @@ public class DispatchingThread extends Thread {
         
     }
 
-    public DispatchingThread(){}
+    public DispatchingThread(){
+
+    }
+
+    public SchedulingThread getSchedulingThread() {
+        return schedulingThread;
+    }
 
     /**
      * Returns the job queue
@@ -284,9 +296,5 @@ public class DispatchingThread extends Thread {
             Thread.currentThread().interrupt();
             System.out.println("Thread interrupted. Exiting...");
         }
-    }
-
-    public static void main(String[] args) {
-        
     }
 }

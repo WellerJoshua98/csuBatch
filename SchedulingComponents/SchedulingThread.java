@@ -3,7 +3,6 @@ import BatchJobsComponents.BatchJob;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.LinkedBlockingQueue;
 
 public class SchedulingThread extends Thread {
 
@@ -132,9 +131,5 @@ public class SchedulingThread extends Thread {
             System.out.println(job.getJobName()+  ", Priority: " + job.getPriority() + ", Execution time: " + job.getExecutionTime());
         }
     }
-
-    public static void main(String[] args) {
-        
-    };
     
 }

@@ -11,15 +11,15 @@ import SchedulingComponents.SchedulingThread;
 
 public class UIHelper {
     
-    public void commandFunction(String command, SchedulingThread fcfSchedulingThread){
+    public void commandFunction(String command, SchedulingThread schedulingThread){
         if(command.equals("exit")){
             System.out.println("Enter quit to exit the program");
         } else if (command.equals("help")){
             help();
         } else if (command.contains("run")){
-            run(command, fcfSchedulingThread);
+            run(command, schedulingThread);
         } else if (command.equals("list")) {
-            list(fcfSchedulingThread);
+            list(schedulingThread);
         } else if (command.contains("test")) {
             test(command);
         } else if(command.contains("sjf")){
@@ -46,9 +46,9 @@ public class UIHelper {
         System.out.println("quit: exit CSUbatch");
     }
 
-    public void run(String job, SchedulingThread fcfSchedulingThread) {
+    public void run(String job, SchedulingThread schedulingThread) {
         String[] words = job.split("run ");
-        fcfSchedulingThread.run(words[1]);
+        schedulingThread.run(words[1]);
     }
     
     public void list(SchedulingThread jobs) {
