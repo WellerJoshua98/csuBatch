@@ -224,7 +224,7 @@ public class DispatchingThread extends Thread {
         .orElse(0.0)/1000.0;
     }
 
-    private double calculateThroughput(){
+    public double calculateThroughput(){
         long endTime = System.currentTimeMillis();
         double elapsedTime = (endTime - startTime)/ 1000.0;
 
@@ -295,11 +295,11 @@ public class DispatchingThread extends Thread {
 
             //long endTime = System.nanoTime();
             //long elapsedTime = (endTime - startTime)/ 1000000000;
-            System.out.println("Total number of jobs submitted: " + jobCount);
-            System.out.println("Average turnaround time: " + String.format("%.2f", getAverageTurnaroundTime()) + " seconds");
-            System.out.println("Average CPU time: " + getAverageCpuTime() + " seconds");
-            System.out.println("Average waiting time: " + String.format("%.2f", getAverageWaitingTime()) + " seconds");
-            System.out.println("Throughput: " + String.format("%.3f", throughput) + " No ./second");
+            // System.out.println("Total number of jobs submitted: " + jobCount);
+            // System.out.println("Average turnaround time: " + String.format("%.2f", getAverageTurnaroundTime()) + " seconds");
+            // System.out.println("Average CPU time: " + getAverageCpuTime() + " seconds");
+            // System.out.println("Average waiting time: " + String.format("%.2f", getAverageWaitingTime()) + " seconds");
+            // System.out.println("Throughput: " + String.format("%.3f", throughput) + " No ./second");
         } catch (InterruptedException e){
             Thread.currentThread().interrupt();
             System.out.println("Thread interrupted. Exiting...");

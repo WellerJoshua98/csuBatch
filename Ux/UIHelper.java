@@ -9,7 +9,7 @@ import SchedulingComponents.SchedulingThread;
 /**
  * The UIHelper class serves as an interface between users and the batch scheduling 
  * system. Its primary role is to process user commands and trigger the 
- * corresponding operations
+ * corresponding operations.
  */
 public class UIHelper {
     
