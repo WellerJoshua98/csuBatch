@@ -6,11 +6,17 @@ import PerformanceEvaluationComponents.PerformanceEvaluation;
 import SchedulingComponents.SchedulingPolicy;
 import SchedulingComponents.SchedulingThread;
 
-
-
-
+/**
+ * The UIHelper class serves as an interface between users and the batch scheduling 
+ * system. Its primary role is to process user commands and trigger the 
+ * corresponding operations
+ */
 public class UIHelper {
     
+    /**
+     * Processes user input commands like run, list, test, help, and policy switching
+     * commands (fcfs, sjf, priority)
+     */
     public void commandFunction(String command, SchedulingThread schedulingThread){
         if(command.equals("exit")){
             System.out.println("Enter quit to exit the program");
@@ -33,6 +39,10 @@ public class UIHelper {
         }
     }
     
+    /**
+     * Lists detailed instructions for available commands, guiding users on how to 
+     * interact with the system.
+     */
     public void help() {
         System.out.println("run <job> <time> <pri>: submit a job named <job>");
         System.out.println("\texecution time is <time>,");
@@ -46,11 +56,19 @@ public class UIHelper {
         System.out.println("quit: exit CSUbatch");
     }
 
+    /**
+     * Extracts job details from the user command and delegates job submission to 
+     * the SchedulingThread.
+     */
     public void run(String job, SchedulingThread schedulingThread) {
         String[] words = job.split("run ");
         schedulingThread.run(words[1]);
     }
-    
+
+    /**
+     * Retrieves and displays all jobs in the queue, along with their details 
+     * (e.g., name, execution time, priority, arrival time, and progress).
+     */
     public void list(SchedulingThread jobs) {
         System.out.println("Total numbe of jobs in the queue: " + jobs.getTotalJobs());
         System.out.println("Scheduling Policy: " + jobs.getName());
@@ -60,6 +78,10 @@ public class UIHelper {
         }
     }
 
+    /**
+     * Parses benchmarking parameters from the user input and runs performance 
+     * evaluation tests using the PerformanceEvaluation class.
+     */
     public void test(String userInput){
         String[] testParameters = userInput.split(" ");
         if(testParameters.length == 7){
@@ -100,6 +122,10 @@ public class UIHelper {
         System.out.println("Scheduling policy is switched to " + policy + "All the " +  dispatchingThread.getJobQueue().size()  + " waiting jobs have been rescheduled.");
     }
 
+    /**
+     * Provides helpful suggestions if users enter an invalid command, 
+     * assisting them in correcting their input.
+     */
     public void errorHelperBatch(String command){
         if(command.startsWith("r")) {
             System.out.println("Were you trying to use the command run?");
@@ -114,7 +140,4 @@ public class UIHelper {
             System.out.println("The command you entered was not found, Please try again or type help to to see command options");
         }
     }
-    
-
-
 }

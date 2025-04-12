@@ -4,6 +4,11 @@ import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.concurrent.BlockingQueue;
 
+
+/**
+ * The SchedulingThread class extends the Thread class and represents 
+ * a thread for managing job scheduling in a batch system
+ */
 public class SchedulingThread extends Thread {
 
     private static void errorHelperBatch() {
@@ -14,14 +19,17 @@ public class SchedulingThread extends Thread {
     private int jobCount = 0;
 
 
-    public int getTotalJobs(){
-        return jobCount;
-    }
-
-
     public SchedulingThread(BlockingQueue<BatchJob> jobQueue, String schedulingPolicyName) {
         this.jobQueue = jobQueue;
         this.schedulingPolicyName = schedulingPolicyName;
+    }
+
+    
+    /**
+     * Returns the total number of jobs.
+     */
+    public int getTotalJobs(){
+        return jobCount;
     }
 
     /**
@@ -56,6 +64,9 @@ public class SchedulingThread extends Thread {
         this.schedulingPolicyName = schedulingPolicyName;
     }
 
+    /**
+     * Calculates the total execution time of jobs in the queue.
+     */
     public int getTotalTime(){
         int total = 0;
         for(BatchJob job: jobQueue){
@@ -124,6 +135,11 @@ public class SchedulingThread extends Thread {
             this.setJobQueue(priority);
         }
     }
+
+    /**
+     * Prints a summary of the job queue, including job names, 
+     * priorities, and execution times.
+     */
 
     public void printJobQueue() {
         System.out.println("Jobs in the queue:");

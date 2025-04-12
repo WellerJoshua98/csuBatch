@@ -8,6 +8,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.BlockingQueue;
 
+/**
+ * The DispatchingThread class extends the Thread class and represents a 
+ * thread responsible for managing and executing jobs in the batch system.
+ */
 public class DispatchingThread extends Thread {
     private SchedulingThread schedulingThread;
     private BlockingQueue<BatchJob> jobQueue;
@@ -82,6 +86,10 @@ public class DispatchingThread extends Thread {
 
     }
 
+    /**
+     * Returns the schedulingThread
+     * @return
+     */
     public SchedulingThread getSchedulingThread() {
         return schedulingThread;
     }
