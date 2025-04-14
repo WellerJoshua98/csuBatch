@@ -242,7 +242,7 @@ public class DispatchingThread extends Thread {
                 turnaroundTimes.add(job.getTurnaroundTime());
 
                 long endCpuTime = threadMXBean.getCurrentThreadCpuTime();
-                System.out.println(startCpuTime + " " + endCpuTime);
+                
                 long cpuTime = endCpuTime - startCpuTime;
                 
                 cpuTimes.add(cpuTime);
