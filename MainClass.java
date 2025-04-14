@@ -1,5 +1,6 @@
 
 import BatchJobsComponents.BatchJob;
+import DispatchingComponents.DispatchingThread;
 import SchedulingComponents.SchedulingThread;
 import Ux.UIHelper;
 import java.util.Scanner;
@@ -9,38 +10,40 @@ import java.util.concurrent.LinkedBlockingQueue;
 public class MainClass {
     
     public static void main(String[] args) {
-        UIHelper helper = new UIHelper();
-        BlockingQueue<BatchJob> fcfs = new LinkedBlockingQueue<>();
-        SchedulingThread fcfSchedulingThread  = new SchedulingThread(fcfs, "fcfs");
+        // Initialize necessary components
+        UIHelper helper = new UIHelper(); 
+        BlockingQueue<BatchJob> jobQueue = new LinkedBlockingQueue<>();
+        DispatchingThread dispatchingThread = new DispatchingThread(jobQueue, 0, "FCFS"); // Default policy: FCFS
+        
+        // Welcome Message
+        System.out.println("Welcome to CSU BatchJob Scheduler!");
+        System.out.println("Enter 'help' for available commands.");
+        
+        // Start the DispatchingThread
+        dispatchingThread.start();
 
-        System.out.println("Welcome to CSU BatchJob Please Enter a Command");
-        System.out.println("Enter help for more options");
+        // User Input Loop
+        try (Scanner keyboardScanner = new Scanner(System.in)) {
+            while (true) {
+                System.out.print("Enter command: "); // Prompt user
+                String command = keyboardScanner.nextLine();
 
-        Scanner keyboardScanner = new Scanner(System.in); // No try-with-resources here
-
-        while (true) {
-            String line = "";
-            try {
-                line = keyboardScanner.nextLine();
-
-                if (line.equals("quit")) {
-                    break; // Exit the loop if the user enters "quit"
+                if (command.equalsIgnoreCase("quit")) {
+                    break; // Exit the program on "quit"
                 }
-                helper.commandFunction(line, fcfSchedulingThread);
-                System.out.println("Please Enter a new command");
-            } catch (IllegalStateException e){
-                System.out.println("Scanner closed, closing program");
-                break;
+                
+                // Pass command to UIHelper
+                helper.commandFunction(command, dispatchingThread.getSchedulingThread());
             }
         }
 
-        System.out.println("Exiting out CSUBatch");
-        System.out.println("Total number of job submitted: " + fcfSchedulingThread.getTotalJobs());
-        System.out.println("Average turnaround time:       ");
-        System.out.println("Average CPU time:              ");
-        System.out.println("Average waiting time:          ");
-        System.out.println("Throughput:                    ");
-
-        keyboardScanner.close(); // Close the scanner when done
+        // Exit Message and Final Summary
+        System.out.println("Exiting CSU BatchJob Scheduler...");
+        SchedulingThread schedulingThread = dispatchingThread.getSchedulingThread();
+        System.out.println("Total number of jobs submitted: " + schedulingThread.getTotalJobs());
+        System.out.printf("Average turnaround time: %.2f seconds\n", dispatchingThread.getAverageTurnaroundTime());
+        System.out.printf("Average CPU time: %.2f seconds\n", dispatchingThread.getAverageCpuTime());
+        System.out.printf("Average waiting time: %.2f seconds\n", dispatchingThread.getAverageWaitingTime());
+        System.out.printf("Throughput: %.2f jobs/second\n", dispatchingThread.calculateThroughput());
     }
 }

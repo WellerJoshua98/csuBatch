@@ -8,6 +8,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.BlockingQueue;
 
+/**
+ * The DispatchingThread class extends the Thread class and represents a 
+ * thread responsible for managing and executing jobs in the batch system.
+ */
 public class DispatchingThread extends Thread {
     private SchedulingThread schedulingThread;
     private BlockingQueue<BatchJob> jobQueue;
@@ -28,6 +32,8 @@ public class DispatchingThread extends Thread {
         this.jobQueue = jobQueue;
         this.executionTime = executionTime;
 
+        schedulingThread = new SchedulingThread(jobQueue, policy);
+
         //Enables the thread CPU time measurement
         // if(!threadMXBean.isThreadCpuTimeEnabled()){
         //     threadMXBean.setThreadCpuTimeEnabled(true);
@@ -47,6 +53,8 @@ public class DispatchingThread extends Thread {
         this.executionTime = executionTime;
         this.policy = policy;
 
+        schedulingThread = new SchedulingThread(jobQueue, policy);
+
         //Enables the thread CPU time measurement
         // if(!threadMXBean.isThreadCpuTimeEnabled()){
         //     threadMXBean.setThreadCpuTimeEnabled(true);
@@ -63,6 +71,8 @@ public class DispatchingThread extends Thread {
 
     public DispatchingThread(BlockingQueue<BatchJob> jobQueue) {
         this.jobQueue = jobQueue;
+
+        schedulingThread = new SchedulingThread(jobQueue, policy);
         
         if (threadMXBean.isCurrentThreadCpuTimeSupported()) {
             threadMXBean.setThreadCpuTimeEnabled(true); // Enable CPU time measurement
@@ -72,7 +82,17 @@ public class DispatchingThread extends Thread {
         
     }
 
-    public DispatchingThread(){}
+    public DispatchingThread(){
+
+    }
+
+    /**
+     * Returns the schedulingThread
+     * @return
+     */
+    public SchedulingThread getSchedulingThread() {
+        return schedulingThread;
+    }
 
     /**
      * Returns the job queue
@@ -204,7 +224,7 @@ public class DispatchingThread extends Thread {
         .orElse(0.0)/1000.0;
     }
 
-    private double calculateThroughput(){
+    public double calculateThroughput(){
         long endTime = System.currentTimeMillis();
         double elapsedTime = (endTime - startTime)/ 1000.0;
 
@@ -275,18 +295,14 @@ public class DispatchingThread extends Thread {
 
             //long endTime = System.nanoTime();
             //long elapsedTime = (endTime - startTime)/ 1000000000;
-            System.out.println("Total number of jobs submitted: " + jobCount);
-            System.out.println("Average turnaround time: " + String.format("%.2f", getAverageTurnaroundTime()) + " seconds");
-            System.out.println("Average CPU time: " + getAverageCpuTime() + " seconds");
-            System.out.println("Average waiting time: " + String.format("%.2f", getAverageWaitingTime()) + " seconds");
-            System.out.println("Throughput: " + String.format("%.3f", throughput) + " No ./second");
+            // System.out.println("Total number of jobs submitted: " + jobCount);
+            // System.out.println("Average turnaround time: " + String.format("%.2f", getAverageTurnaroundTime()) + " seconds");
+            // System.out.println("Average CPU time: " + getAverageCpuTime() + " seconds");
+            // System.out.println("Average waiting time: " + String.format("%.2f", getAverageWaitingTime()) + " seconds");
+            // System.out.println("Throughput: " + String.format("%.3f", throughput) + " No ./second");
         } catch (InterruptedException e){
             Thread.currentThread().interrupt();
             System.out.println("Thread interrupted. Exiting...");
         }
-    }
-
-    public static void main(String[] args) {
-        
     }
 }

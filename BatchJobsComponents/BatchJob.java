@@ -10,6 +10,10 @@ public class BatchJob {
     private String arrivalTime;
     private String status;
 
+    /**
+     * The BatchJob class represents a job in a batch scheduling 
+     * system, encapsulating its attributes and operations.
+     */
     public BatchJob(String jobName, int executionTime, int priority, String arrivalTime, String status) {
         this.jobName = jobName;
         this.executionTime = executionTime;
@@ -110,12 +114,20 @@ public class BatchJob {
         this.status = status;
     }
 
+    /**
+     * Overrides our toString function to output the BatchJob
+     * @return New formated string.
+     */
     @Override
     public String toString() {
         return String.format("Job Name: %s, Execution Time: %d, Priority: %d, Arrival Time: %s, Status: %s",
                 jobName, executionTime, priority, arrivalTime, status);
     }
 
+    /**
+     * Simulates job execution, updating the completionTime 
+     * when execution finishes.
+     */
     public void execute(){
         //System.out.println("Executing job: " + jobName);
         
