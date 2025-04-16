@@ -1,5 +1,6 @@
 package SchedulingComponents;
 import BatchJobsComponents.BatchJob;
+import DispatchingComponents.DispatchingThread;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.concurrent.BlockingQueue;
@@ -78,7 +79,7 @@ public class SchedulingThread extends Thread {
     /**
      * Run the scheduling thread
      */
-    public void run(String userInput) {
+    public void run(String userInput, DispatchingThread dispatchingThread) {
         System.out.println("Scheduling thread started");
         SchedulingPolicy schedulingPolicy = new SchedulingPolicy();
         //Add jobs to the queue
@@ -134,6 +135,9 @@ public class SchedulingThread extends Thread {
             BlockingQueue<BatchJob> priority = schedulingPolicy.priority_scheduling(jobQueue);
             this.setJobQueue(priority);
         }
+        dispatchingThread.setJobQueue(this.jobQueue);
+        dispatchingThread.start();
+        
     }
 
     /**
