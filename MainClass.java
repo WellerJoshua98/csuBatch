@@ -1,6 +1,5 @@
 
 import BatchJobsComponents.BatchJob;
-import DispatchingComponents.DispatchingThread;
 import SchedulingComponents.SchedulingThread;
 import Ux.UIHelper;
 import java.util.Scanner;
@@ -13,14 +12,14 @@ public class MainClass {
         // Initialize necessary components
         UIHelper helper = new UIHelper(); 
         BlockingQueue<BatchJob> jobQueue = new LinkedBlockingQueue<>();
-        DispatchingThread dispatchingThread = new DispatchingThread(jobQueue, 0, "FCFS"); // Default policy: FCFS
+        SchedulingThread schedulingThread = new SchedulingThread(jobQueue, "FCFS"); // Default policy: FCFS
         
         // Welcome Message
         System.out.println("Welcome to CSU BatchJob Scheduler!");
         System.out.println("Enter 'help' for available commands.");
         
         // Start the DispatchingThread
-        dispatchingThread.start();
+        schedulingThread.start();
 
         // User Input Loop
         try (Scanner keyboardScanner = new Scanner(System.in)) {
@@ -33,17 +32,16 @@ public class MainClass {
                 }
                 
                 // Pass command to UIHelper
-                helper.commandFunction(command, dispatchingThread.getSchedulingThread());
+                helper.commandFunction(command, schedulingThread);
             }
         }
 
         // Exit Message and Final Summary
         System.out.println("Exiting CSU BatchJob Scheduler...");
-        SchedulingThread schedulingThread = dispatchingThread.getSchedulingThread();
         System.out.println("Total number of jobs submitted: " + schedulingThread.getTotalJobs());
-        System.out.printf("Average turnaround time: %.2f seconds\n", dispatchingThread.getAverageTurnaroundTime());
-        System.out.printf("Average CPU time: %.2f seconds\n", dispatchingThread.getAverageCpuTime());
-        System.out.printf("Average waiting time: %.2f seconds\n", dispatchingThread.getAverageWaitingTime());
-        System.out.printf("Throughput: %.2f jobs/second\n", dispatchingThread.calculateThroughput());
+        System.out.printf("Average turnaround time: %.2f seconds\n", schedulingThread.getDispatchingThread().getAverageTurnaroundTime());
+        System.out.printf("Average CPU time: %.2f seconds\n", schedulingThread.getDispatchingThread().getAverageCpuTime());
+        System.out.printf("Average waiting time: %.2f seconds\n", schedulingThread.getDispatchingThread().getAverageWaitingTime());
+        System.out.printf("Throughput: %.2f jobs/second\n", schedulingThread.getDispatchingThread().calculateThroughput());
     }
 }
