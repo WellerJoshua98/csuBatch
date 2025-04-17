@@ -14,13 +14,14 @@ public class MainClass {
         UIHelper helper = new UIHelper(); 
         BlockingQueue<BatchJob> jobQueue = new LinkedBlockingQueue<>();
         DispatchingThread dispatchingThread = new DispatchingThread(jobQueue, 0, "FCFS"); // Default policy: FCFS
+        SchedulingThread schedulingThread = new SchedulingThread(jobQueue, "FCFS");
         
         // Welcome Message
         System.out.println("Welcome to CSU BatchJob Scheduler!");
         System.out.println("Enter 'help' for available commands.");
         
-        // Start the DispatchingThread
-        dispatchingThread.start();
+        // Start the schedulingThread
+        schedulingThread.start();
 
         // User Input Loop
         try (Scanner keyboardScanner = new Scanner(System.in)) {
@@ -33,13 +34,12 @@ public class MainClass {
                 }
                 
                 // Pass command to UIHelper
-                helper.commandFunction(command, dispatchingThread.getSchedulingThread());
+                helper.commandFunction(command, dispatchingThread, schedulingThread);
             }
         }
 
         // Exit Message and Final Summary
         System.out.println("Exiting CSU BatchJob Scheduler...");
-        SchedulingThread schedulingThread = dispatchingThread.getSchedulingThread();
         System.out.println("Total number of jobs submitted: " + schedulingThread.getTotalJobs());
         System.out.printf("Average turnaround time: %.2f seconds\n", dispatchingThread.getAverageTurnaroundTime());
         System.out.printf("Average CPU time: %.2f seconds\n", dispatchingThread.getAverageCpuTime());
