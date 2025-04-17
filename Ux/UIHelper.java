@@ -17,7 +17,7 @@ public class UIHelper {
      * Processes user input commands like run, list, test, help, and policy switching
      * commands (fcfs, sjf, priority)
      */
-    public void commandFunction(String command, SchedulingThread schedulingThread){
+    public void commandFunction(String command, SchedulingThread schedulingThread, DispatchingThread dispatchingThread) {
         if(command.equals("exit")){
             System.out.println("Enter quit to exit the program");
         } else if (command.equals("help")){
@@ -29,11 +29,11 @@ public class UIHelper {
         } else if (command.contains("test")) {
             test(command);
         } else if(command.contains("sjf")){
-            switchPolicy("SJF");
+            switchPolicy("SJF", dispatchingThread);
         } else if(command.contains("fcfs")){
-            switchPolicy("FCFS");
+            switchPolicy("FCFS", dispatchingThread);
         } else if(command.contains("priority")){
-            switchPolicy("Priority");
+            switchPolicy("Priority", dispatchingThread);
         } else {
             errorHelperBatch(command);
         }
@@ -101,8 +101,7 @@ public class UIHelper {
      * Switch the scheduling policy
      * @param policy
      */
-    public void switchPolicy(String policy){
-        DispatchingThread dispatchingThread = new DispatchingThread();
+    public void switchPolicy(String policy, DispatchingThread dispatchingThread) {
         SchedulingPolicy schedulingPolicy = new SchedulingPolicy();
         // Switch the scheduling policy
         switch (policy) {
