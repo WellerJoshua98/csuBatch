@@ -17,13 +17,13 @@ public class UIHelper {
      * Processes user input commands like run, list, test, help, and policy switching
      * commands (fcfs, sjf, priority)
      */
-    public void commandFunction(String command, SchedulingThread schedulingThread, DispatchingThread dispatchingThread) {
+    public void commandFunction(String command, DispatchingThread dispatchingThread, SchedulingThread schedulingThread){
         if(command.equals("exit")){
             System.out.println("Enter quit to exit the program");
         } else if (command.equals("help")){
             help();
         } else if (command.contains("run")){
-            run(command, schedulingThread);
+            run(command, schedulingThread, dispatchingThread);
         } else if (command.equals("list")) {
             list(schedulingThread);
         } else if (command.contains("test")) {
@@ -60,9 +60,9 @@ public class UIHelper {
      * Extracts job details from the user command and delegates job submission to 
      * the SchedulingThread.
      */
-    public void run(String job, SchedulingThread schedulingThread) {
+    public void run(String job, SchedulingThread schedulingThread, DispatchingThread dispatchingThread) {
         String[] words = job.split("run ");
-        schedulingThread.run(words[1]);
+        schedulingThread.run(words[1], dispatchingThread);
     }
 
     /**
