@@ -3,7 +3,12 @@ import BatchJobsComponents.BatchJob;
 import DispatchingComponents.DispatchingThread;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 
 
 /**
@@ -16,8 +21,11 @@ public class SchedulingThread extends Thread {
         throw new UnsupportedOperationException("Not supported yet.");
     }
     private BlockingQueue<BatchJob> jobQueue;
+    private BlockingQueue<BatchJob> submittedJobsQueue = new LinkedBlockingQueue<>();
     private String schedulingPolicyName;
     private int jobCount = 0;
+    private int totalExecutionTime = 0;
+    private final List<BatchJob> jobBuffer = Collections.synchronizedList(new ArrayList<>());
 
 
     public SchedulingThread(BlockingQueue<BatchJob> jobQueue, String schedulingPolicyName) {
@@ -33,6 +41,7 @@ public class SchedulingThread extends Thread {
         return jobCount;
     }
 
+
     /**
      * Returns the job queue
      * @return
@@ -47,6 +56,14 @@ public class SchedulingThread extends Thread {
      */
     public void setJobQueue(BlockingQueue<BatchJob> jobQueue) {
         this.jobQueue = jobQueue;
+    }
+
+    /**
+     * Returns the submitted jobs queue
+     * @return
+     */
+    public BlockingQueue<BatchJob> getSubmittedJobQueue(){
+        return submittedJobsQueue;
     }
 
     /**
@@ -66,6 +83,14 @@ public class SchedulingThread extends Thread {
     }
 
     /**
+     * Returns the total execution time of all jobs in the queue.
+     * @return
+     */
+    public int getTotalExecutionTime() {
+        return totalExecutionTime;
+    }
+
+    /**
      * Calculates the total execution time of jobs in the queue.
      */
     public int getTotalTime(){
@@ -75,68 +100,93 @@ public class SchedulingThread extends Thread {
         }
         return total;
     }
-    
-    /**
-     * Run the scheduling thread
-     */
-    public void run(String userInput, DispatchingThread dispatchingThread) {
-        System.out.println("Scheduling thread started");
-        SchedulingPolicy schedulingPolicy = new SchedulingPolicy();
-        //Add jobs to the queue
-        String[] jobDetails = userInput.split("\\s+");
-        if(!userInput.equals("exit")) {
-            if(jobDetails.length == 3) {
-                LocalTime currentTime = LocalTime.now();
-                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm:ss");
-                String formattedTime = currentTime.format(formatter);
-                String status = "";
-                if(jobQueue.isEmpty()){
-                    status = "run";
-                }
-                BatchJob job = new BatchJob(status, 0, 0, formattedTime, status);
-                try {
-                    job = new BatchJob(jobDetails[0], Integer.parseInt(jobDetails[1]), Integer.parseInt(jobDetails[2]), formattedTime, status);
-                    try {
-                        jobQueue.put(job);
-                        System.out.println("Job " + job.getJobName() + " was submitted");
-                        System.out.println("Total number of jobs in the queue: " + jobQueue.size());
-                        System.out.println("Expected waiting time: " + getTotalTime());
-                        System.out.println("Scheduling Policy " + getSchedulingPolicy());
-                    } catch (InterruptedException e) {
-                        Thread.currentThread().interrupt();
-                    }
-                } catch (Exception e) {
-                    System.out.println("Invalid input. Please enter job name, execution time and priority separated by space.");
-                    System.out.println("Input for <pri> should be a number");
 
-                    System.out.println("Were you trying to use the command run?");
-                    System.out.println("Try run <job> <time> <pri>: submit a job named <job>");
-                }
-                
-                
-            } else {
-                System.out.println("Invalid input. Please enter job name, execution time and priority separated by space.");
-                System.out.println("Input for <time> should be a number");
-                
-                System.out.println("Were you trying to use the command run?");
-                System.out.println("Try run <job> <time> <pri>: submit a job named <job>");
+    public void submitJob(BatchJob job) {
+        try {
+            jobQueue.put(job);
+            submittedJobsQueue.put(job);
+            jobCount++;
+            totalExecutionTime += job.getExecutionTime();
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
+    }
+
+    public void updatePolicy(String policy) {
+        this.schedulingPolicyName = policy;
+        reOrderQueue();
+    }
+
+    private void reOrderQueue(){
+        List<BatchJob> jobList = new ArrayList<>();
+        jobQueue.drainTo(jobList);
+
+        BatchJob runningJob = DispatchingThread.getCurrentJob();
+        List<BatchJob> waitingJobs = new ArrayList<>();
+        
+        for(BatchJob job: jobList){
+            if(!job.equals(runningJob)){
+                waitingJobs.add(job);
             }
         }
 
-        // Schedule jobs based on the scheduling policy
-        if(schedulingPolicyName.equals("FCFS")) {
-            BlockingQueue<BatchJob> fcfsQueue = schedulingPolicy.fcfs_scheduling(jobQueue);
-            this.setJobQueue(fcfsQueue);
-        } else if(schedulingPolicyName.equals("SJF")) {
-            BlockingQueue<BatchJob> sjfQueue = schedulingPolicy.sjf_scheduling(jobQueue);
-            this.setJobQueue(sjfQueue);
-        } else if(schedulingPolicyName.equals("Priority")) {
-            System.out.println("Priority scheduling");
-            BlockingQueue<BatchJob> priority = schedulingPolicy.priority_scheduling(jobQueue);
-            this.setJobQueue(priority);
+        if(schedulingPolicyName.equals("FCFS")){
+            
+        } else if(schedulingPolicyName.equals("SJF")){
+            waitingJobs.sort(Comparator.comparingInt(BatchJob::getExecutionTime));
+        } else if(schedulingPolicyName.equals("Priority")){
+            waitingJobs.sort(Comparator.comparingInt(BatchJob::getPriority).reversed());
         }
-        dispatchingThread.setJobQueue(this.jobQueue);
-        dispatchingThread.start();
+
+        if(runningJob != null){
+            jobQueue.add(runningJob);
+        }
+        jobQueue.addAll(waitingJobs);
+
+        System.out.println("Scheduling policy is switched to " + schedulingPolicyName + " All the " +  waitingJobs.size()  + " waiting jobs have been rescheduled.");
+    }
+    
+    private void scheduleJobs(){
+        List<BatchJob> newJobs;
+        synchronized (jobBuffer) {
+            if(jobBuffer.isEmpty()) {
+                return; // No new jobs to schedule
+            }
+            newJobs = new ArrayList<>(jobBuffer);
+            jobBuffer.clear();
+        }
+        // Schedule jobs based on the scheduling policy
+        
+        if(schedulingPolicyName.equals("FCFS")) {
+
+        } else if(schedulingPolicyName.equals("SJF")) {
+            newJobs.sort(Comparator.comparingInt(BatchJob::getExecutionTime));
+        } else if(schedulingPolicyName.equals("Priority")) {
+            newJobs.sort(Comparator.comparingInt(BatchJob::getPriority).reversed());
+        }
+        
+        for(BatchJob job : newJobs) {
+            try {
+                jobQueue.put(job);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
+        }
+    }
+    /**
+     * Run the scheduling thread
+     */
+    @Override
+    public void run() {
+        
+        while (!isInterrupted()) {
+            scheduleJobs(); // Schedule jobs based on the scheduling policy
+            try {
+                Thread.sleep(500);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
+        }
         
     }
 

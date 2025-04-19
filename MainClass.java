@@ -9,6 +9,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 
 public class MainClass {
     
+    
     public static void main(String[] args) {
         // Initialize necessary components
         UIHelper helper = new UIHelper(); 
@@ -22,6 +23,8 @@ public class MainClass {
         
         // Start the schedulingThread
         schedulingThread.start();
+        // Start the dispatchingThread
+        dispatchingThread.start();
 
         // User Input Loop
         try (Scanner keyboardScanner = new Scanner(System.in)) {
@@ -30,6 +33,9 @@ public class MainClass {
                 String command = keyboardScanner.nextLine();
 
                 if (command.equalsIgnoreCase("quit")) {
+                    helper.commandFunction("quit", dispatchingThread, schedulingThread);
+                    schedulingThread.interrupt(); // Interrupt the scheduling thread
+                    dispatchingThread.interrupt(); // Interrupt the dispatching thread
                     break; // Exit the program on "quit"
                 }
                 
@@ -37,13 +43,5 @@ public class MainClass {
                 helper.commandFunction(command, dispatchingThread, schedulingThread);
             }
         }
-
-        // Exit Message and Final Summary
-        System.out.println("Exiting CSU BatchJob Scheduler...");
-        System.out.println("Total number of jobs submitted: " + schedulingThread.getTotalJobs());
-        System.out.printf("Average turnaround time: %.2f seconds\n", dispatchingThread.getAverageTurnaroundTime());
-        System.out.printf("Average CPU time: %.2f seconds\n", dispatchingThread.getAverageCpuTime());
-        System.out.printf("Average waiting time: %.2f seconds\n", dispatchingThread.getAverageWaitingTime());
-        System.out.printf("Throughput: %.2f jobs/second\n", dispatchingThread.calculateThroughput());
     }
 }
