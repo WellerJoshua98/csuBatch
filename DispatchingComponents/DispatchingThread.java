@@ -196,7 +196,7 @@ public class DispatchingThread extends Thread {
         return cpuTimes.stream()
         .mapToLong(Long::longValue)
         .average()
-        .orElse(0.0)/100_000_000.0;
+        .orElse(0.0)/1_000_000_000.0;
     }
 
     /**
