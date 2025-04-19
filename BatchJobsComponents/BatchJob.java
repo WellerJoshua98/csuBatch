@@ -23,6 +23,13 @@ public class BatchJob {
         this.status = status;
     }
 
+    public BatchJob(String jobName, int executionTime, int priority) {
+        this.jobName = jobName;
+        this.executionTime = executionTime;
+        this.priority = priority;
+        this.submissionTime = System.currentTimeMillis();
+    }
+
     public String getJobName() {
         return jobName;
     }

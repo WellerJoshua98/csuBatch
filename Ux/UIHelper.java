@@ -1,5 +1,8 @@
 package Ux;
 
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
+
 import BatchJobsComponents.BatchJob;
 import DispatchingComponents.DispatchingThread;
 import PerformanceEvaluationComponents.PerformanceEvaluation;
@@ -29,11 +32,13 @@ public class UIHelper {
         } else if (command.contains("test")) {
             test(command);
         } else if(command.contains("sjf")){
-            switchPolicy("SJF");
+            switchPolicy("SJF", schedulingThread);
         } else if(command.contains("fcfs")){
-            switchPolicy("FCFS");
+            switchPolicy("FCFS", schedulingThread);
         } else if(command.contains("priority")){
-            switchPolicy("Priority");
+            switchPolicy("Priority", schedulingThread);
+        } else if(command.equals("quit")){
+            onQuit(schedulingThread, dispatchingThread);
         } else {
             errorHelperBatch(command);
         }
@@ -62,7 +67,41 @@ public class UIHelper {
      */
     public void run(String job, SchedulingThread schedulingThread, DispatchingThread dispatchingThread) {
         String[] words = job.split("run ");
-        schedulingThread.run(words[1], dispatchingThread);
+        String[] jobDetails = words[1].split("\\s+");
+        
+        if(jobDetails.length == 3){
+            LocalTime currentTime = LocalTime.now();
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm:ss");
+            String formattedTime = currentTime.format(formatter);
+            String status = "";
+            if(schedulingThread.getJobQueue().isEmpty()){
+                status = "run";
+            }
+
+            BatchJob newJob = new BatchJob(status, 0, 0, formattedTime, status);
+            try{
+                newJob = new BatchJob(jobDetails[0], Integer.parseInt(jobDetails[1]), Integer.parseInt(jobDetails[2]), formattedTime, status);
+                schedulingThread.submitJob(newJob);
+                System.out.println("Job " + newJob.getJobName() + " was submitted");
+                System.out.println("Total number of jobs in the queue: " + schedulingThread.getTotalJobs());
+                System.out.println("Expected waiting time: " + schedulingThread.getTotalExecutionTime() + " seconds");
+                System.out.println("Scheduling Policy " + schedulingThread.getSchedulingPolicy());
+            
+            }catch(Exception e){
+                System.out.println("Invalid input. Please enter job name, execution time and priority separated by space.");
+                System.out.println("Input for <pri> should be a number");
+                System.out.println("Were you trying to use the command run?");
+                System.out.println("Try run <job> <time> <pri>: submit a job named <job>");
+            }
+        }else{
+            System.out.println("Invalid input. Please enter job name, execution time and priority separated by space.");
+            System.out.println("Input for <time> should be a number");
+            
+            System.out.println("Were you trying to use the command run?");
+            System.out.println("Try run <job> <time> <pri>: submit a job named <job>");
+        }
+
+        //schedulingThread.run(words[1], dispatchingThread);
     }
 
     /**
@@ -70,10 +109,10 @@ public class UIHelper {
      * (e.g., name, execution time, priority, arrival time, and progress).
      */
     public void list(SchedulingThread jobs) {
-        System.out.println("Total numbe of jobs in the queue: " + jobs.getTotalJobs());
-        System.out.println("Scheduling Policy: " + jobs.getName());
+        System.out.println("Total number of jobs in the queue: " + jobs.getTotalJobs());
+        System.out.println("Scheduling Policy: " + jobs.getSchedulingPolicy());
         System.out.println("Name CPU_Time Pri Arrival_time Progress");
-        for(BatchJob job: jobs.getJobQueue()){
+        for(BatchJob job: jobs.getSubmittedJobQueue()){
             System.out.println(job.toString());
         }
     }
@@ -101,25 +140,8 @@ public class UIHelper {
      * Switch the scheduling policy
      * @param policy
      */
-    public void switchPolicy(String policy){
-        DispatchingThread dispatchingThread = new DispatchingThread();
-        SchedulingPolicy schedulingPolicy = new SchedulingPolicy();
-        // Switch the scheduling policy
-        switch (policy) {
-            case "FCFS":
-                dispatchingThread.setJobQueue(schedulingPolicy.fcfs_scheduling(dispatchingThread.getJobQueue()));
-                break;
-        
-            case "SJF":
-                dispatchingThread.setJobQueue(schedulingPolicy.sjf_scheduling(dispatchingThread.getJobQueue()));
-                break;
-            case "Priority":
-                dispatchingThread.setJobQueue(schedulingPolicy.priority_scheduling(dispatchingThread.getJobQueue()));
-                break;    
-            default:
-                break;
-        }
-        System.out.println("Scheduling policy is switched to " + policy + "All the " +  dispatchingThread.getJobQueue().size()  + " waiting jobs have been rescheduled.");
+    public void switchPolicy(String policy, SchedulingThread schedulingThread) {
+        schedulingThread.updatePolicy(policy);
     }
 
     /**
@@ -140,4 +162,14 @@ public class UIHelper {
             System.out.println("The command you entered was not found, Please try again or type help to to see command options");
         }
     }
+
+    public void onQuit(SchedulingThread schedulingThread, DispatchingThread dispatchingThread) {
+        System.out.println("Exiting CSU BatchJob Scheduler...");
+        System.out.println("Total number of jobs submitted: " + schedulingThread.getTotalJobs());
+        System.out.printf("Average turnaround time: %.2f seconds\n", dispatchingThread.getAverageTurnaroundTime());
+        System.out.printf("Average CPU time: %.2f seconds\n", dispatchingThread.getAverageCpuTime());
+        System.out.printf("Average waiting time: %.2f seconds\n", dispatchingThread.getAverageWaitingTime());
+        System.out.printf("Throughput: %.2f jobs/second\n", dispatchingThread.calculateThroughput());
+    }
+
 }
