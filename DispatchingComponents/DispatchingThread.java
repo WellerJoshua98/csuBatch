@@ -28,6 +28,7 @@ public class DispatchingThread extends Thread {
     private double throughput;
     private String policy;
     private static volatile BatchJob currentJob = null;
+    private boolean isPerformamaceEvaluation = false;
 
     public DispatchingThread(BlockingQueue<BatchJob> jobQueue, int executionTime) {
         this.jobQueue = jobQueue;
@@ -188,6 +189,10 @@ public class DispatchingThread extends Thread {
         return currentJob;
     } 
 
+    public void setIsPerformanceEvaluation(boolean isPerformamaceEvaluation){
+        this.isPerformamaceEvaluation = isPerformamaceEvaluation;
+    }
+
     /**
      * Returns the average turnaround times from the jobs
      * @return turnaroundTimes
@@ -289,15 +294,23 @@ public class DispatchingThread extends Thread {
                 if(completedJobs > 0){
                     this.throughput = calculateThroughput();
                 }
+
+                if(isPerformamaceEvaluation){
+                    if(jobQueue.isEmpty()){
+                        Thread.currentThread().interrupt();
+                    }
+                }
             }
 
             //long endTime = System.nanoTime();
             //long elapsedTime = (endTime - startTime)/ 1000000000;
-            // System.out.println("Total number of jobs submitted: " + jobCount);
-            // System.out.println("Average turnaround time: " + String.format("%.2f", getAverageTurnaroundTime()) + " seconds");
-            // System.out.println("Average CPU time: " + getAverageCpuTime() + " seconds");
-            // System.out.println("Average waiting time: " + String.format("%.2f", getAverageWaitingTime()) + " seconds");
-            // System.out.println("Throughput: " + String.format("%.3f", throughput) + " No ./second");
+            if(isPerformamaceEvaluation){
+                System.out.println("Total number of jobs submitted: " + jobCount);
+                System.out.println("Average turnaround time: " + String.format("%.2f", getAverageTurnaroundTime()) + " seconds");
+                System.out.println("Average CPU time: " + getAverageCpuTime() + " seconds");
+                System.out.println("Average waiting time: " + String.format("%.2f", getAverageWaitingTime()) + " seconds");
+                System.out.println("Throughput: " + String.format("%.3f", throughput) + " No ./second");
+            }  
         } catch (InterruptedException e){
             Thread.currentThread().interrupt();
         }
