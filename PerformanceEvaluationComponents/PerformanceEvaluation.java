@@ -3,6 +3,8 @@ package PerformanceEvaluationComponents;
 import BatchJobsComponents.BatchJob;
 import DispatchingComponents.DispatchingThread;
 import SchedulingComponents.SchedulingPolicy;
+import SchedulingComponents.SchedulingThread;
+
 import java.util.Random;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -88,20 +90,12 @@ public class PerformanceEvaluation {
 
     public void evaluation(){
         generateJobs();
-        SchedulingPolicy schedulingPolicy = new SchedulingPolicy();
+        //SchedulingPolicy schedulingPolicy = new SchedulingPolicy();
         DispatchingThread dispatchingThread = new DispatchingThread(jobs);
-        
-        if(policy.toLowerCase().equals("fcfs")){
-            var sortedJobs = schedulingPolicy.fcfs_scheduling(jobs);
-            jobs = sortedJobs;
-        } else if(policy.toLowerCase().equals("sjf")){
-            var sortedJobs = schedulingPolicy.sjf_scheduling(jobs);
-            jobs = sortedJobs;
-        } else if(policy.toLowerCase().equals("priority")){
-            var sortedJobs = schedulingPolicy.priority_scheduling(jobs);
-            jobs = sortedJobs;
-        } 
+        SchedulingThread schedulingThread = new SchedulingThread(jobs, policy);
+        dispatchingThread.setIsPerformanceEvaluation(true);
 
+        schedulingThread.start();
         dispatchingThread.start();
         System.out.println("Performance Evaluation is running...");
         try{
